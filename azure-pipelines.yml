@@ -1,16 +1,16 @@
 trigger:
 - main
 - develop
-
 pool:
   name: Default
-  vmImage: 'ubuntu-20.04' # Use 'windows-latest' for Windows
+  vmImage: 'ubuntu-20.04'
+  demands:
+  - npm
 
 variables:
   buildConfiguration: 'Release'
   wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '6.x'
-  nodeVersion: '16.x'
 
 steps:
 - task: UseDotNet@2
@@ -18,38 +18,12 @@ steps:
   inputs:
     version: '$(dotnetSdkVersion)'
 
-- task: UseNode@1
-  displayName: 'Use Node.js $(nodeVersion)'
-  inputs:
-    version: '$(nodeVersion)'
-
-- script: |
-    if [[ "$AGENT_OS" == "Linux" ]]; then
-      sudo apt-get update
-      sudo apt-get install -y build-essential python3
-    elif [[ "$AGENT_OS" == "Windows_NT" ]]; then
-      choco install python --version=3.9.0 -y
-      choco install visualstudio2022buildtools -y
-      choco install visualstudio2022-workload-vctools -y
-    fi
-  displayName: 'Install build tools'
-
-- task: Cache@2
-  displayName: 'Cache npm packages'
-  inputs:
-    key: 'npm | "$(Agent.OS)" | package-lock.json'
-    restoreKeys: |
-      npm | "$(Agent.OS)"
-    path: $(Pipeline.Workspace)/node_modules
-
 - task: Npm@1
   displayName: 'Run npm install'
   inputs:
     verbose: false
 
-- script: |
-    npm install -g sass
-    sass $(wwwrootDir) --output $(wwwrootDir)
+- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
 - task: gulp@1
@@ -91,4 +65,4 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  condition: succeeded()
