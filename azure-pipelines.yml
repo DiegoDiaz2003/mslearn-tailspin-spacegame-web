@@ -3,7 +3,6 @@ trigger:
 
 pool:
   name: Default
-  vmImage: 'ubuntu-20.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -16,11 +15,10 @@ steps:
   inputs:
     version: '$(dotnetSdkVersion)'
 
-# Instalar herramientas de compilación necesarias para node-gyp
+# Instalar herramientas de compilación necesarias para node-gyp en Windows
 - script: |
-    sudo apt-get update
-    sudo apt-get install -y build-essential python3
-  displayName: 'Install build tools'
+    npm install --global windows-build-tools
+  displayName: 'Install build tools (Windows)'
 
 # Instalar una versión específica de node-sass (si es necesario)
 - script: 'npm install node-sass@5.0.0'
@@ -33,7 +31,7 @@ steps:
     arguments: '--legacy-peer-deps'
 
 # Compilar Sass (usando node-sass o dart-sass)
-- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+- script: '.\node_modules\.bin\node-sass $(wwwrootDir) --output $(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
 - task: gulp@1
