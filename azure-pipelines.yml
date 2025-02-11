@@ -11,6 +11,16 @@ variables:
   dotnetSdkVersion: '6.x'
 
 steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y build-essential python3
+  displayName: 'Install build tools'
+
+- task: NodeTool@0
+  displayName: 'Install Node.js'
+  inputs:
+    versionSpec: '16.x'
+
 - task: UseDotNet@2
   displayName: 'Use .NET SDK $(dotnetSdkVersion)'
   inputs:
@@ -20,8 +30,10 @@ steps:
   displayName: 'Run npm install'
   inputs:
     verbose: false
+  env:
+    SASS_BINARY_SITE: 'https://github.com/sass/node-sass/releases/download'
 
-- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+- script: 'npx sass $(wwwrootDir):$(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
 - task: gulp@1
@@ -36,7 +48,7 @@ steps:
   inputs:
     command: 'restore'
     projects: '**/*.csproj'
-
+    
 - template: Tailspin.SpaceGame.Web/templates/build.yml
   parameters:
     buildConfiguration: 'Debug'
