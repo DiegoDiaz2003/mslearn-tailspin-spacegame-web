@@ -9,16 +9,27 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y python3 make g++ build-essential
+  displayName: 'Instalar dependencias del sistema'
+
+- task: UseNode@1
+  displayName: 'Usar Node.js 16.x'
+  inputs:
+    versionSpec: '16.x'
+    checkLatest: true
+
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
   inputs:
     packageType: sdk
     version: '6.x'
 
-- task: Npm@1
+- script: |
+    npm cache clean --force
+    npm install
   displayName: 'Run npm install'
-  inputs:
-    verbose: false
 
 - script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
   displayName: 'Compile Sass assets'
