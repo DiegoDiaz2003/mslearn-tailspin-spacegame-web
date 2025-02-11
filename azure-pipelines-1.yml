@@ -3,7 +3,7 @@ trigger:
 
 pool:
   name: Default
-  vmImage: windows-latest  # Asegúrate de que el agente sea Windows
+  vmImage: windows-latest
 
 variables:
   buildConfiguration: 'Release'
@@ -12,6 +12,10 @@ steps:
 - script: |
     choco install python --version=3.9.0 -y
   displayName: 'Instalar Python (Windows)'
+
+- script: |
+    npm install --global --production windows-build-tools
+  displayName: 'Instalar herramientas de compilación para node-gyp'
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
