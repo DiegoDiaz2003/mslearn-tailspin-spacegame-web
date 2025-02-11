@@ -2,7 +2,7 @@ trigger:
 - main
 - develop
 pool:
-  name: Azure Pipelines
+  name: Default
   vmImage: 'ubuntu-20.04'
   demands:
   - npm
