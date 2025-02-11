@@ -2,10 +2,7 @@ trigger:
 - '*'
 
 pool:
-  name: Default
   vmImage: 'ubuntu-20.04'
-  demands:
-  - npm
 
 variables:
   buildConfiguration: 'Release'
@@ -18,17 +15,25 @@ steps:
   inputs:
     version: '$(dotnetSdkVersion)'
 
+# Instalar herramientas de compilación (opcional si usas node-sass)
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y build-essential python3
+  displayName: 'Install build tools'
+
+# Instalar versión compatible de node-sass (opcional)
+- script: 'npm install node-sass@5.0.0'
+  displayName: 'Install compatible node-sass version'
+
+# Ejecutar npm install con argumentos para evitar conflictos
 - task: Npm@1
   displayName: 'Run npm install'
   inputs:
-    verbose: false
-    arguments: '--no-optional'
+    arguments: '--legacy-peer-deps'
 
-- script: 'npx sass $(wwwrootDir) --no-source-map --style=compressed'
+# Compilar Sass usando dart-sass (recomendado)
+- script: 'npx sass $(wwwrootDir):$(wwwrootDir) --no-source-map --style=compressed'
   displayName: 'Compile Sass assets'
-
-- script: 'npm install --global gulp-cli'
-  displayName: 'Install Gulp CLI globally'
 
 - task: gulp@1
   displayName: 'Run gulp tasks'
