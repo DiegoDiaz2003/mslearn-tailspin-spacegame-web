@@ -11,14 +11,8 @@ variables:
 steps:
 - script: |
     sudo apt-get update
-    sudo apt-get install -y python3 make g++ build-essential
-  displayName: 'Instalar dependencias del sistema'
-
-- task: UseNode@1
-  displayName: 'Usar Node.js 16.x'
-  inputs:
-    versionSpec: '16.x'
-    checkLatest: true
+    sudo apt-get install -y python3
+  displayName: 'Instalar Python'
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
@@ -26,10 +20,10 @@ steps:
     packageType: sdk
     version: '6.x'
 
-- script: |
-    npm cache clean --force
-    npm install
+- task: Npm@1
   displayName: 'Run npm install'
+  inputs:
+    verbose: false
 
 - script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
   displayName: 'Compile Sass assets'
