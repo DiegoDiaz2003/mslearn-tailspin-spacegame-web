@@ -3,6 +3,7 @@ trigger:
 - develop
 
 pool:
+  name: Default
   vmImage: 'ubuntu-20.04' # Use 'windows-latest' for Windows
 
 variables:
