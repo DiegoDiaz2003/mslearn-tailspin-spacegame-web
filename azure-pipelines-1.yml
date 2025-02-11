@@ -3,16 +3,15 @@ trigger:
 
 pool:
   name: Default
-  vmImage: ubuntu-latest
+  vmImage: windows-latest  # Asegúrate de que el agente sea Windows
 
 variables:
   buildConfiguration: 'Release'
 
 steps:
 - script: |
-    sudo apt-get update
-    sudo apt-get install -y python3
-  displayName: 'Instalar Python'
+    choco install python --version=3.9.0 -y
+  displayName: 'Instalar Python (Windows)'
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
