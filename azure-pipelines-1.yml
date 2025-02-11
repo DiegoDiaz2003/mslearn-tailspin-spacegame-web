@@ -10,12 +10,14 @@ variables:
 
 steps:
 - script: |
+    choco install visualstudio2019buildtools -y --ignore-checksums
     choco install python --version=3.9.0 -y
-  displayName: 'Instalar Python (Windows)'
+  displayName: 'Instalar herramientas necesarias (Visual Studio Build Tools y Python)'
 
 - script: |
-    npm install --global --production windows-build-tools
-  displayName: 'Instalar herramientas de compilación para node-gyp'
+    npm config set python python3.9
+    npm config set msvs_version 2019
+  displayName: 'Configurar npm para usar Python y Visual Studio'
 
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
