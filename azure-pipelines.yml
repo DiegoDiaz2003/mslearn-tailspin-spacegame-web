@@ -71,12 +71,11 @@ steps:
     custom: tool
     arguments: 'run reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publicar informe de cobertura de código'
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/CodeCoverage'
-    ArtifactName: 'CodeCoverage'
-    publishLocation: 'Container'
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish the project - $(buildConfiguration)'
